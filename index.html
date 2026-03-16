@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modül 9 — Tarımdan Girişime: AI ile AgriTech Fikir Geliştirme</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Lato',sans-serif}
+body{background:#fdfaf5;display:flex;flex-direction:column}
+
+.header{background:#1a0a00;padding:9px 22px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #d97706}
+.badge{background:rgba(217,119,6,0.25);border:1px solid rgba(217,119,6,0.5);color:#fbbf24;font-size:10px;font-weight:700;letter-spacing:2px;padding:3px 10px;border-radius:3px}
+.header h1{font-size:15px;font-weight:900;color:#fefce8}
+.comp-wrap{display:flex;align-items:center;gap:8px}
+.comp-bar-bg{width:90px;height:7px;background:rgba(255,255,255,0.15);border-radius:4px;overflow:hidden}
+.comp-bar{height:100%;background:linear-gradient(90deg,#d97706,#f59e0b);border-radius:4px;transition:width 0.5s;width:0%}
+.comp-pct{font-size:12px;font-weight:700;color:#fbbf24;min-width:32px}
+
+.main{flex:1;display:grid;grid-template-columns:230px 1fr 250px;gap:0;overflow:hidden;min-height:0}
+
+/* ── LEFT: problem list ── */
+.left-col{background:white;border-right:1px solid #f0e8d8;display:flex;flex-direction:column;overflow:hidden}
+.col-hdr{padding:10px 14px;background:#fef9ef;border-bottom:1px solid #f0e8d8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#92400e;flex-shrink:0}
+.prob-list{flex:1;overflow-y:auto}
+.prob-item{padding:10px 14px;border-bottom:1px solid #faf5eb;cursor:pointer;transition:all 0.2s;display:flex;align-items:flex-start;gap:9px}
+.prob-item:hover{background:#fefce8}
+.prob-item.sel{background:#fef3c7;border-left:3px solid #d97706}
+.pi-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.pi-name{font-size:12px;font-weight:700;color:#1a0a00;margin-bottom:2px}
+.pi-desc{font-size:10px;color:#92400e;line-height:1.3}
+.pi-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;margin-top:3px}
+.tag-h{background:#fce7f3;color:#9d174d}
+.tag-m{background:#fff7ed;color:#c2410c}
+.tag-e{background:#f0fdf4;color:#166534}
+
+/* ── CENTER: builder ── */
+.center-col{display:flex;flex-direction:column;gap:0;overflow:hidden;min-height:0;background:#f9f4ec}
+
+.builder-scroll{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+
+.step-card{background:white;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.05);overflow:hidden}
+.step-header{background:#1a0a00;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.sh-title{font-size:12px;font-weight:700;color:#fef3c7;display:flex;align-items:center;gap:8px}
+.sh-num{background:rgba(217,119,6,0.4);color:#fbbf24;font-size:10px;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.sh-done{font-size:14px}
+.step-body{padding:12px;display:flex;flex-direction:column;gap:8px}
+
+.ig-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#92400e;margin-bottom:4px}
+.ig-input{width:100%;border:2px solid #f0e8d8;border-radius:8px;padding:7px 11px;font-family:'Lato',sans-serif;font-size:12px;color:#1a0a00;resize:none;transition:border-color 0.2s;background:#fdfaf5}
+.ig-input:focus{outline:none;border-color:#d97706;background:white}
+
+.suggestions-row{display:flex;flex-direction:column;gap:5px}
+.sug-btn{display:flex;align-items:flex-start;gap:7px;background:#fef9ef;border:1px solid #f0cb8a;border-radius:7px;padding:7px 10px;cursor:pointer;transition:all 0.2s;text-align:left;width:100%}
+.sug-btn:hover{background:#fef3c7;border-color:#d97706}
+.sug-icon{font-size:12px;flex-shrink:0;margin-top:1px}
+.sug-label{font-size:9px;font-weight:700;color:#d97706;letter-spacing:1px;text-transform:uppercase;margin-bottom:1px}
+.sug-text{font-size:11px;color:#78350f;line-height:1.4}
+
+.step-footer{padding:8px 12px;background:#fef9ef;border-top:1px solid #f0e8d8;display:flex;gap:7px}
+.btn-sug{background:#1a0a00;color:#fef3c7;font-family:'Lato',sans-serif;font-size:11px;font-weight:700;border:none;padding:7px 14px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background 0.2s}
+.btn-sug:hover{background:#3d1a00}
+.btn-done{background:#d97706;color:white;font-family:'Lato',sans-serif;font-size:11px;font-weight:700;border:none;padding:7px 14px;border-radius:6px;cursor:pointer;transition:background 0.2s;margin-left:auto}
+.btn-done:hover{background:#b45309}
+
+/* ── RIGHT: pitch preview ── */
+.right-col{background:white;border-left:1px solid #f0e8d8;display:flex;flex-direction:column;overflow:hidden}
+.rp-hdr{padding:10px 14px;background:#fef9ef;border-bottom:1px solid #f0e8d8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#92400e;flex-shrink:0}
+.pitch-scroll{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+
+.pitch-card{border:2px solid #f0e8d8;border-radius:14px;overflow:hidden}
+.pc-top{background:linear-gradient(135deg,#1a0a00,#3d1a00);padding:14px;text-align:center}
+.pc-emoji{font-size:32px;margin-bottom:5px}
+.pc-name{font-family:'Playfair Display',serif;font-style:italic;font-size:18px;font-weight:700;color:#fef3c7;min-height:24px}
+.pc-tagline{font-size:11px;color:rgba(254,243,199,0.65);margin-top:3px;min-height:16px}
+.pc-body{padding:12px}
+.pf-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#92400e;margin-bottom:3px;margin-top:8px}
+.pf-label:first-child{margin-top:0}
+.pf-value{font-size:12px;color:#1a0a00;line-height:1.4;font-weight:600;min-height:16px}
+.pf-empty{color:#c8b89a;font-style:italic;font-weight:400}
+
+.score-section{padding:10px 14px;background:#fef9ef;border-top:1px solid #f0e8d8;flex-shrink:0}
+.score-big{font-family:'Playfair Display',serif;font-style:italic;font-size:30px;color:#d97706;text-align:center;line-height:1}
+.score-lbl{font-size:9px;font-weight:700;letter-spacing:2px;color:#92400e;text-align:center;text-transform:uppercase;margin-top:2px}
+
+.criteria-list{display:flex;flex-direction:column;gap:5px}
+.crit-item{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#78350f}
+.crit-icon{font-size:13px;flex-shrink:0}
+.crit-bar-bg{flex:1;height:5px;background:#f0e8d8;border-radius:3px;overflow:hidden}
+.crit-bar{height:100%;border-radius:3px;background:#d97706;transition:width 0.8s}
+
+/* Notification */
+.notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:#1a0a00;color:#fef3c7;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,0.3);transition:transform 0.3s;z-index:200;white-space:nowrap}
+.notif.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="badge">MODÜL 9</span>
+    <h1>🚀 Tarımdan Girişime: AI ile AgriTech Fikir Geliştirme</h1>
+  </div>
+  <div class="comp-wrap">
+    <span style="font-size:11px;color:rgba(254,243,199,0.5)">Tamamlanma:</span>
+    <div class="comp-bar-bg"><div class="comp-bar" id="compBar"></div></div>
+    <span class="comp-pct" id="compPct">%0</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="left-col">
+    <div class="col-hdr">🌱 Problem Seç</div>
+    <div class="prob-list" id="probList"></div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center-col">
+    <div class="builder-scroll" id="builderScroll">
+      <div style="text-align:center;padding:40px 20px;opacity:0.4">
+        <div style="font-size:40px;margin-bottom:10px">👈</div>
+        <div style="font-size:13px;color:#92400e;line-height:1.6">Soldan bir tarım problemi seç<br>→ Fikir geliştirme adımları başlar!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-col">
+    <div class="rp-hdr">📋 Proje Kartın (TOBBCup Şablonu)</div>
+    <div class="pitch-scroll">
+      <div class="pitch-card">
+        <div class="pc-top">
+          <div class="pc-emoji" id="pcEmoji">🌱</div>
+          <div class="pc-name" id="pcName">Proje adın...</div>
+          <div class="pc-tagline" id="pcTagline">Sloganın burada görünecek</div>
+        </div>
+        <div class="pc-body">
+          <div class="pf-label">🎯 Problem</div>
+          <div class="pf-value pf-empty" id="pvProblem">Henüz girilmedi</div>
+          <div class="pf-label">💡 Çözüm</div>
+          <div class="pf-value pf-empty" id="pvSolution">Henüz girilmedi</div>
+          <div class="pf-label">🤖 AI/Teknoloji</div>
+          <div class="pf-value pf-empty" id="pvTech">Henüz girilmedi</div>
+          <div class="pf-label">🎯 Hedef Kullanıcı</div>
+          <div class="pf-value pf-empty" id="pvUser">Henüz girilmedi</div>
+          <div class="pf-label">📈 Etki</div>
+          <div class="pf-value pf-empty" id="pvImpact">Henüz girilmedi</div>
+        </div>
+      </div>
+
+      <div class="score-section">
+        <div class="score-big" id="pitchScore">0</div>
+        <div class="score-lbl">/ 100 proje puanı</div>
+      </div>
+
+      <div style="padding:0 2px">
+        <div class="col-hdr" style="border-radius:8px 8px 0 0;padding:8px 12px;font-size:9px">📊 Değerlendirme Kriterleri</div>
+        <div class="criteria-list" style="background:white;border:1px solid #f0e8d8;border-top:none;border-radius:0 0 8px 8px;padding:10px">
+          <div class="crit-item"><span class="crit-icon">🎯</span>Problem Netliği<div class="crit-bar-bg"><div class="crit-bar" id="cb1" style="width:0%"></div></div></div>
+          <div class="crit-item"><span class="crit-icon">💡</span>Çözüm Özgünlüğü<div class="crit-bar-bg"><div class="crit-bar" id="cb2" style="width:0%"></div></div></div>
+          <div class="crit-item"><span class="crit-icon">🤖</span>AI Entegrasyonu<div class="crit-bar-bg"><div class="crit-bar" id="cb3" style="width:0%"></div></div></div>
+          <div class="crit-item"><span class="crit-icon">📈</span>Etki Potansiyeli<div class="crit-bar-bg"><div class="crit-bar" id="cb4" style="width:0%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="notif">✅ Kaydedildi!</div>
+
+<script>
+const problems = [
+  {icon:'💧',name:'Su İsrafı',desc:'Tarlalar gereğinden fazla sulanıyor.',tag:'tag-h',tagTxt:'Yüksek Etki',
+   emoji:'💧',color:'#0077b6',
+   steps:[
+     {title:'Problemi Tanımla',icon:'🎯',field:'problem',ph:'Örn: Türkiye\'de tarım sulamasında %60\'a kadar israf var. Çiftçiler sensörsüz, sezgiyle sulama yapıyor.',
+      sugs:[{icon:'💡',lbl:'AI Öneri',txt:'Küçük çiftçiler sulama zamanlamasını tahmin etmekte zorlanıyor. IoT sensör + AI karar algoritması bu boşluğu doldurabilir.'}]},
+     {title:'Çözümünü Tanımla',icon:'💡',field:'solution',ph:'Örn: Toprak sensörü + AI algoritması ile tarlaya özgü sulama takvimi oluşturan mobil uygulama.',
+      sugs:[{icon:'🤖',lbl:'Teknoloji',txt:'LoRa sensörleri + Karar ağacı AI + SMS tabanlı önerim sistemi → akıllı telefonu olmayan çiftçilere de ulaşır.'}]},
+     {title:'AI/Teknoloji Katmanı',icon:'🤖',field:'tech',ph:'Örn: Makine öğrenmesi, IoT sensörler, hava API, mobil uygulama.',
+      sugs:[{icon:'⚙️',lbl:'Stack',txt:'Python + TensorFlow Lite + LoRaWAN + Flutter App → düşük maliyetli, çevrimdışı çalışabilen sistem.'}]},
+     {title:'Hedef Kullanıcı',icon:'👥',field:'user',ph:'Örn: 5-500 dönüm arasında tarım yapan küçük ve orta ölçekli çiftçiler.',
+      sugs:[{icon:'👨‍🌾',lbl:'Segment',txt:'Türkiye\'de 3 milyonun üzerinde küçük ölçekli çiftçi var. %40\'ı akıllı telefon kullanıyor.'}]},
+     {title:'Sosyal/Ekonomik Etki',icon:'📈',field:'impact',ph:'Örn: %35 su tasarrufu → yıllık 500TL/dönüm kazanç artışı.',
+      sugs:[{icon:'🌍',lbl:'Etki',txt:'Her 100 çiftçide %30 su tasarrufu = 300.000 ton su/yıl. 2030 su krizine karşı kritik çözüm.'}]},
+   ]},
+  {icon:'🍄',name:'Bitki Hastalığı',desc:'Geç teşhis büyük verim kayıplarına yol açıyor.',tag:'tag-h',tagTxt:'Kritik',
+   emoji:'🔬',color:'#388e3c',
+   steps:[
+     {title:'Problemi Tanımla',icon:'🎯',field:'problem',ph:'Bitki hastalıkları görsel tespiti uzmanlık ister. Küçük çiftçi bölge tarım müdürlüğünü beklerken %25-40 verim kaybı yaşıyor.',
+      sugs:[{icon:'💡',lbl:'AI Öneri',txt:'Fotoğraf tabanlı anlık hastalık teşhis sistemi ile çiftçi uzman beklemeden aksiyon alabilir.'}]},
+     {title:'Çözümünü Tanımla',icon:'💡',field:'solution',ph:'Yaprak fotoğrafını çek → AI 3 saniyede 40 hastalığı tanır → tedavi önerisi verir mobil uygulama.',
+      sugs:[{icon:'🤖',lbl:'Teknoloji',txt:'ResNet-50 fine-tuned model + PlantVillage veri seti + Offline çalışan mobil uygulama.'}]},
+     {title:'AI/Teknoloji Katmanı',icon:'🤖',field:'tech',ph:'Bilgisayarlı görü, derin öğrenme modeli, transfer learning, mobil uygulama.',
+      sugs:[{icon:'⚙️',lbl:'Stack',txt:'TensorFlow Lite + %94 doğruluk + 40 hastalık + 12 farklı bitki türü + Türkçe destek.'}]},
+     {title:'Hedef Kullanıcı',icon:'👥',field:'user',ph:'Sebze/meyve üreticileri, seracılar, organik tarım yapanlar.',
+      sugs:[{icon:'👨‍🌾',lbl:'Segment',txt:'Türkiye\'de 600.000+ seracı, 1.2M sebze üreticisi. Yıllık hastalık kayıpları 8 milyar TL.'}]},
+     {title:'Sosyal/Ekonomik Etki',icon:'📈',field:'impact',ph:'%70 erken teşhis → %30 kimyasal azalma → %25 verim artışı.',
+      sugs:[{icon:'🌍',lbl:'Etki',txt:'Erken teşhis ile kimyasal ilaç kullanımı %30 azalır. Gıda güvenliği ve çevre için çift kazanç.'}]},
+   ]},
+  {icon:'🌡️',name:'İklim Riski',desc:'Çiftçiler ekstrem hava olaylarına hazırsız.',tag:'tag-m',tagTxt:'Orta Etki',
+   emoji:'⛈️',color:'#0288d1',
+   steps:[
+     {title:'Problemi Tanımla',icon:'🎯',field:'problem',ph:'Meteoroloji tahminleri çiftlik bazında değil şehir bazında. Don, dolu, sel erken uyarıları yetersiz.',
+      sugs:[{icon:'💡',lbl:'AI Öneri',txt:'Mikro iklim istasyonları + AI nowcasting ile tarla düzeyinde 3 saatlik tehlike uyarısı verilebilir.'}]},
+     {title:'Çözümünü Tanımla',icon:'💡',field:'solution',ph:'Tarla başına iklim sensörü + AI tahmin modeli + WhatsApp bot ile anlık don/dolu uyarısı.',
+      sugs:[{icon:'🤖',lbl:'Teknoloji',txt:'Weather ML model + LoRa ağı + WhatsApp Business API → herhangi telefonu olan çiftçiye ulaşır.'}]},
+     {title:'AI/Teknoloji Katmanı',icon:'🤖',field:'tech',ph:'LSTM tahmin modeli, mikro iklim sensörü, mesajlaşma API.',
+      sugs:[{icon:'⚙️',lbl:'Stack',txt:'LSTM + %88 tahmin doğruluğu + 3 saatlik pencere + WhatsApp/SMS dual kanal.'}]},
+     {title:'Hedef Kullanıcı',icon:'👥',field:'user',ph:'Bağ-bahçe sahipleri, meyve üreticileri, açık alan çiftçileri.',
+      sugs:[{icon:'👨‍🌾',lbl:'Segment',txt:'Türkiye\'de her yıl don hasarı 3-5 milyar TL. En büyük zarar Ege ve İç Anadolu meyve bahçelerinde.'}]},
+     {title:'Sosyal/Ekonomik Etki',icon:'📈',field:'impact',ph:'3 saatlik uyarı → hasarın %70\'ini önleyebilir.',
+      sugs:[{icon:'🌍',lbl:'Etki',txt:'Çiftçi başına yıllık ortalama 15.000 TL don hasarının %70\'i erken uyarıyla önlenebilir.'}]},
+   ]},
+  {icon:'📊',name:'Piyasa Bilgisi',desc:'Çiftçiler ürünü en iyi fiyata satamıyor.',tag:'tag-e',tagTxt:'Kolay Başla',
+   emoji:'📈',color:'#7b1fa2',
+   steps:[
+     {title:'Problemi Tanımla',icon:'🎯',field:'problem',ph:'Çiftçi tarlada beklerken fiyat düşüyor. Aracılar bilgi asimetrisinden kar ediyor.',
+      sugs:[{icon:'💡',lbl:'AI Öneri',txt:'AI destekli fiyat tahmin aracı ile çiftçi "ne zaman sat" kararını veriden yönetebilir.'}]},
+     {title:'Çözümünü Tanımla',icon:'💡',field:'solution',ph:'Tarihsel hal fiyatları + AI tahmin + anlık piyasa fiyatı → "En iyi satış zamanı" önerisi.',
+      sugs:[{icon:'🤖',lbl:'Teknoloji',txt:'ARIMA zaman serisi + HAL API + hava verisi → 7 günlük fiyat aralığı tahmini.'}]},
+     {title:'AI/Teknoloji Katmanı',icon:'🤖',field:'tech',ph:'Zaman serisi analizi, HAL fiyat verileri, mobil bildirim.',
+      sugs:[{icon:'⚙️',lbl:'Stack',txt:'Python Prophet model + Tarım Bakanlığı açık veri + Mobil push bildirim sistemi.'}]},
+     {title:'Hedef Kullanıcı',icon:'👥',field:'user',ph:'Sebze/meyve üreticileri, hal alıcıları, kooperatifler.',
+      sugs:[{icon:'👨‍🌾',lbl:'Segment',txt:'Türkiye\'de günde 15.000 ton sebze-meyve hal üzerinden geçiyor. Fiyat dalgalanması %40\'a ulaşıyor.'}]},
+     {title:'Sosyal/Ekonomik Etki',icon:'📈',field:'impact',ph:'%15-20 fiyat artışı → çiftçi geliri yılda 8.000 TL artar.',
+      sugs:[{icon:'🌍',lbl:'Etki',txt:'Fiyat şeffaflığı hem çiftçiyi hem tüketiciyi kazandırır. Gıda enflasyonunu frenleyebilir.'}]},
+   ]},
+  {icon:'🌿',name:'Organik Sertifika',desc:'Sertifikasyon pahalı ve yavaş.',tag:'tag-m',tagTxt:'Yenilik',
+   emoji:'🌿',color:'#2e7d32',
+   steps:[
+     {title:'Problemi Tanımla',icon:'🎯',field:'problem',ph:'Organik sertifikasyon 3-5 yıl, yüksek maliyet. Küçük çiftçi bu süreçten faydalanamıyor.',
+      sugs:[{icon:'💡',lbl:'AI Öneri',txt:'Blockchain + AI ile şeffaf, düşük maliyetli dijital organik doğrulama sistemi kurulabilir.'}]},
+     {title:'Çözümünü Tanımla',icon:'💡',field:'solution',ph:'Sensör verileri + toprak analizi + blockchain kayıt → güvenilir dijital organik sertifika.',
+      sugs:[{icon:'🤖',lbl:'Teknoloji',txt:'IoT sensör + Ethereum blockchain + AI anomali tespiti → ucuz ve şeffaf sertifikasyon.'}]},
+     {title:'AI/Teknoloji Katmanı',icon:'🤖',field:'tech',ph:'Blockchain, akıllı sözleşme, AI doğrulama, QR izlenebilirlik.',
+      sugs:[{icon:'⚙️',lbl:'Stack',txt:'Hyperledger Fabric + toprak analizi AI + tüketici QR okuma → ürün geçmişi şeffaf.'}]},
+     {title:'Hedef Kullanıcı',icon:'👥',field:'user',ph:'Organik ürün üreticileri, süpermarketler, bilinçli tüketiciler.',
+      sugs:[{icon:'👨‍🌾',lbl:'Segment',txt:'Organik gıda pazarı 2025\'te 1.2 trilyon dolara ulaşacak. Türkiye export potansiyeli çok yüksek.'}]},
+     {title:'Sosyal/Ekonomik Etki',icon:'📈',field:'impact',ph:'Sertifikasyon maliyeti %60 düşer → küçük çiftçi organik pazara girer.',
+      sugs:[{icon:'🌍',lbl:'Etki',txt:'10.000 küçük çiftçinin organik pazara girmesi → ürün değeri 3x artar → köy ekonomisi canlanır.'}]},
+   ]},
+];
+
+let selectedProblem = null;
+let projectData = {problem:'',solution:'',tech:'',user:'',impact:'',name:'',slogan:''};
+let stepDone = [false,false,false,false,false];
+
+// Build problem list
+const probListEl = document.getElementById('probList');
+problems.forEach((p,i) => {
+  const div = document.createElement('div');
+  div.className = 'prob-item';
+  div.innerHTML = `<div class="pi-icon">${p.icon}</div><div><div class="pi-name">${p.name}</div><div class="pi-desc">${p.desc}</div><span class="pi-tag ${p.tag}">${p.tagTxt}</span></div>`;
+  div.addEventListener('click', () => {
+    document.querySelectorAll('.prob-item').forEach(x=>x.classList.remove('sel'));
+    div.classList.add('sel');
+    selectedProblem = p;
+    stepDone = [false,false,false,false,false];
+    projectData = {problem:'',solution:'',tech:'',user:'',impact:'',name:p.name+' Çözümü',slogan:''};
+    buildSteps(p);
+    updatePreview();
+    updateCompletion();
+    document.getElementById('pcEmoji').textContent = p.emoji;
+  });
+  probListEl.appendChild(div);
+});
+
+function buildSteps(p) {
+  const scroll = document.getElementById('builderScroll');
+  scroll.innerHTML = '';
+
+  // Project name row
+  const nameCard = document.createElement('div');
+  nameCard.className = 'step-card';
+  nameCard.innerHTML = `
+    <div class="step-header"><div class="sh-title"><div class="sh-num">★</div>Proje Adı ve Sloganı</div></div>
+    <div class="step-body">
+      <div><div class="ig-label">Proje Adı</div>
+        <input type="text" class="ig-input" id="inp-name" placeholder="Örn: AquaSmart, FarmAI, GreenBot..." value="${projectData.name}" oninput="updateField('name',this.value)">
+      </div>
+      <div><div class="ig-label">Slogan</div>
+        <input type="text" class="ig-input" id="inp-slogan" placeholder="Tek cümlelik etkileyici slogan..." oninput="updateField('slogan',this.value)">
+      </div>
+    </div>`;
+  scroll.appendChild(nameCard);
+
+  p.steps.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'step-card';
+    const sugsHtml = s.sugs.map(sg => `
+      <button class="sug-btn" onclick="applySug('${s.field}',${i},\`${sg.txt.replace(/`/g,"'")}\`)">
+        <span class="sug-icon">${sg.icon}</span>
+        <div><div class="sug-label">${sg.lbl}</div><div class="sug-text">${sg.txt}</div></div>
+      </button>`).join('');
+
+    card.innerHTML = `
+      <div class="step-header">
+        <div class="sh-title"><div class="sh-num">${i+1}</div>${s.icon} ${s.title}</div>
+        <span class="sh-done" id="done-${i}">${stepDone[i]?'✅':'⬜'}</span>
+      </div>
+      <div class="step-body">
+        <div><div class="ig-label">Senin Cevabın</div>
+          <textarea class="ig-input" rows="2" id="inp-${s.field}" placeholder="${s.ph}" oninput="updateField('${s.field}',this.value,${i})">${projectData[s.field]||''}</textarea>
+        </div>
+        <div class="suggestions-row">${sugsHtml}</div>
+      </div>
+      <div class="step-footer">
+        <button class="btn-done" onclick="markDone(${i})">✓ Adımı Tamamla</button>
+      </div>`;
+    scroll.appendChild(card);
+  });
+}
+
+function updateField(field, val, stepIdx) {
+  projectData[field] = val;
+  updatePreview();
+  if(val.length > 15 && stepIdx !== undefined) stepDone[stepIdx] = true;
+  updateCompletion();
+}
+
+function applySug(field, stepIdx, text) {
+  const el = document.getElementById(`inp-${field}`);
+  if(el) { el.value = text; projectData[field] = text; }
+  markDone(stepIdx);
+  updatePreview();
+}
+
+function markDone(i) {
+  stepDone[i] = true;
+  const el = document.getElementById(`done-${i}`);
+  if(el) el.textContent = '✅';
+  updateCompletion();
+  showNotif('✅ Adım tamamlandı!');
+}
+
+function updatePreview() {
+  const setV = (id, val) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(val) { el.textContent = val; el.className = 'pf-value'; }
+    else { el.textContent = 'Henüz girilmedi'; el.className = 'pf-value pf-empty'; }
+  };
+  document.getElementById('pcName').textContent = projectData.name || 'Proje adın...';
+  document.getElementById('pcTagline').textContent = projectData.slogan || 'Sloganın burada görünecek';
+  setV('pvProblem', projectData.problem);
+  setV('pvSolution', projectData.solution);
+  setV('pvTech', projectData.tech);
+  setV('pvUser', projectData.user);
+  setV('pvImpact', projectData.impact);
+
+  const filled = ['problem','solution','tech','user','impact'].filter(k => projectData[k].length > 10).length;
+  const score = Math.round((filled / 5) * 100);
+  document.getElementById('pitchScore').textContent = score;
+  const pcts = [
+    projectData.problem.length > 10 ? 80 : 0,
+    projectData.solution.length > 10 ? 80 : 0,
+    projectData.tech.length > 5 ? 80 : 0,
+    projectData.impact.length > 5 ? 80 : 0,
+  ];
+  ['cb1','cb2','cb3','cb4'].forEach((id,i) => {
+    document.getElementById(id).style.width = pcts[i] + '%';
+  });
+}
+
+function updateCompletion() {
+  const done = stepDone.filter(Boolean).length;
+  const pct = Math.round((done / 5) * 100);
+  document.getElementById('compBar').style.width = pct + '%';
+  document.getElementById('compPct').textContent = '%' + pct;
+}
+
+let notifTimer;
+function showNotif(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => n.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
